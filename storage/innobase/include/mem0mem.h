@@ -343,9 +343,10 @@ void mem_heap_validate(const mem_heap_t *heap);
 
 #endif /* UNIV_DEBUG */
 
-/*#######################################################################*/
 
-/** The info structure stored at the beginning of a heap block */
+/**
+ * The info structure stored at the beginning of a heap block
+ */
 struct mem_block_info_t {
   uint64_t magic_n; /* magic number for debugging */
 #ifdef UNIV_DEBUG

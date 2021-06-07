@@ -43,20 +43,59 @@ external tools. */
 #endif /* UNIV_LIBRARY */
 #include <stdarg.h>
 
-/** Duplicates a NUL-terminated string, allocated from a memory heap.
-@param[in]	heap	memory heap where string is allocated
-@param[in]	str	string to be copied
-@return own: a copy of the string */
+
+/**
+ *
+ * 函数功能：
+ *
+ *  - 其实就是strdup的功能，只是说由于内存管理被托管了
+ *  - 所以这里需要自己写一个这样的功能
+ *
+ * 输入参数：
+ *
+ *  - heap: 从哪个内存堆里面要一段内存来复制字符串
+ *  - str: 源字符串
+ *
+ * 返回值：
+ *
+ *  - 返回新生成的字符串的地址
+ *
+ * 做法：
+ *
+ *  - 调用mem_heap_dup()
+ *
+ **/
 char *mem_heap_strdup(mem_heap_t *heap, const char *str) {
+  // 注意这里加了1，主要是为了保证有空间存放'\0';
   return (static_cast<char *>(mem_heap_dup(heap, str, strlen(str) + 1)));
 }
 
-/** Duplicate a block of data, allocated from a memory heap.
- @return own: a copy of the data */
+/**
+ *
+ *  函数功能：
+ *
+ *  - 类似于strdup，只不过这里给定了需要复制的内存区域的长度
+ *
+ * 输入参数：
+ *
+ *  - heap: 从哪个内存堆里面要一段内存来复制字符串
+ *  - data: 源字符串
+ *  - len: 其实叫data_len更好
+ *
+ * 返回值:
+ *
+ *  - 返回复制之后的数据的长度
+ *
+ * 做法
+ *
+ * 1. 调用mem_heap_alloc();
+ * 2. 再调用memcpy()
+ *
+ **/
 void *mem_heap_dup(
-    mem_heap_t *heap, /*!< in: memory heap where copy is allocated */
-    const void *data, /*!< in: data to be copied */
-    ulint len)        /*!< in: length of data, in bytes */
+    mem_heap_t *heap,
+    const void *data,
+    ulint len)
 {
   return (memcpy(mem_heap_alloc(heap, len), data, len));
 }

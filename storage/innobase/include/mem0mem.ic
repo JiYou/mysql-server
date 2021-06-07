@@ -143,12 +143,29 @@ void *mem_heap_zalloc(mem_heap_t *heap, ulint n) {
   return (memset(mem_heap_alloc(heap, n), 0, n));
 }
 
-/** Allocates n bytes of memory from a memory heap.
-@param[in]	heap	memory heap
-@param[in]	n	number of bytes; if the heap is allowed to grow into
-the buffer pool, this must be <= MEM_MAX_ALLOC_IN_BUF
-@return allocated storage, NULL if did not succeed (only possible for
-MEM_HEAP_BTR_SEARCH type heaps) */
+
+/**
+ *
+ *  函数功能：
+ *
+ *  - 从heap中申请n bytes的内存区域
+ *
+ * 输入参数：
+ *
+ *  - heap: 从哪个内存堆里面要一段内存来复制字符串
+ *  - n: 需要多少bytes
+ *
+ * 返回值:
+ *
+ *  - 返回内存区域
+ *
+ * 做法:
+ *
+ * 1. 首先看最后一个mem block的free空间是否足够
+ * 2. 如果不够，那么申请一个新的mem block.
+ * 3. 从mem block中取出n bytes
+ *
+ **/
 UNIV_INLINE
 void *mem_heap_alloc(mem_heap_t *heap, ulint n) {
   mem_block_t *block;
@@ -157,6 +174,8 @@ void *mem_heap_alloc(mem_heap_t *heap, ulint n) {
 
   ut_d(mem_block_validate(heap));
 
+  // heap->base是双向链表的信息头结点
+  // 这个信息头结点里面记录了双向链表的{head, tail, count}
   block = UT_LIST_GET_LAST(heap->base);
 
   ut_ad(!(block->type & MEM_HEAP_BUFFER) || (n <= MEM_MAX_ALLOC_IN_BUF));
