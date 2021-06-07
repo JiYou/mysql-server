@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -e
+
+# 编译OpenSSL
+
+if [[ ! -e extra/openssl-1.1.1k ]]; then
+  cd extra
+
+  wget https://www.openssl.org/source/openssl-1.1.1k.tar.gz
+  tar zxf openssl-1.1.1k.tar.gz
+
+  cd openssl-1.1.1k
+  mkdir -p out
+  ./Configure  darwin64-arm64-cc no-shared  --prefix=`pwd`/out
+  make && make install
+  cd ..
+
+  cd ..
+fi
+
+# 开始编译Mysql
+
+mkdir -p build
+cd build
+
+cmake .. \
+-DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+-DCMAKE_INSTALL_PREFIX=/opt/mysql \
+-DDEFAULT_CHARSET=utf8 \
+-DDEFAULT_COLLATION=utf8_general_ci \
+-DENABLED_LOCAL_INFILE=ON \
+-DWITH_INNODB_MEMCACHED=ON \
+-DWITH_SSL=/Users/yoj/code/mysql-server/extra/openssl-1.1.1k/out \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DDOWNLOAD_BOOST=1 \
+-DWITH_BOOST=../download
+
+make
