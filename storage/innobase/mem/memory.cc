@@ -283,9 +283,59 @@ void mem_heap_validate(const mem_heap_t *heap) {
 }
 #endif /* UNIV_DEBUG */
 
-/** Creates a memory heap block where data can be allocated.
- @return own: memory heap block, NULL if did not succeed (only possible
- for MEM_HEAP_BTR_SEARCH type heaps) */
+/**
+ *
+ * 函数功能：创建一个heap管理的内存block
+ *
+ * 输入参数：
+ *
+ * - heap: 内存heap，也可以是NULL，如果是NULL
+ *         那么需要创建第一个内存块!
+ *         NOTE: mem_heap_t与mem_block_t是同一种类型
+ * - n:    调用方希望这个内存块至少有这么多bytes来存放东西
+ *
+ * - file_name(DEBUG): 在debug模式下才会有参数，方便跟踪
+ *         内存的使用情况
+ *
+ * - line (DEBUG): 在debug模式下才会有的参数，方便跟踪内存
+ *         的使用情况
+ *
+ * - type: heap->type dynamic/buffer/btr_search类型可选!
+ *
+ * 返回值:
+ *
+ * - 成功：返回创建好的block.
+ *   失败: 返回NULL，只能是BTR_SEARCH类型的heap的时候。
+ *
+ * 实现说明：
+ *
+ * - 目的：为了拿到一个mem block。注意：mem block与buf block
+ *      不是同一个东西.
+ *
+ * - 做法:
+ *
+ * heap的type只支持:
+ *    - dynamic
+ *    - buffer
+ *    - buffer + btr_search
+ *
+ *  if type == dynamic || n < 8K:
+ *    ::malloc()
+ *  else:
+ *    内存块大小 = 16K
+ *    if type == btr_search:
+ *        return heap->free_block
+ *
+ *    从buf_block管理系统中要一个buf_block
+ *
+ *  初始化block
+ *
+ *  如果heap == null:
+ *    heap->total_size = len
+ *  else:
+ *    heap->total_size += len
+ *
+ */
 mem_block_t *mem_heap_create_block_func(
     mem_heap_t *heap, /*!< in: memory heap or NULL if first block
                       should be created */

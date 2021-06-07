@@ -45,49 +45,90 @@ this program; if not, write to the Free Software Foundation, Inc.,
 
 /* -------------------- MEMORY HEAPS ----------------------------- */
 
-/** A block of a memory heap consists of the info structure
-followed by an area of memory */
+/**
+ * A block of a memory heap consists of the info structure
+ * followed by an area of memory
+ *
+ * memory heap里面的memory block，相当于是mem_block的metadata
+ * 后面跟着内存区域
+ */
 typedef struct mem_block_info_t mem_block_t;
 
-/** A memory heap is a nonempty linear list of memory blocks */
+/**
+ * A memory heap is a nonempty linear list of memory blocks
+ *
+ */
 typedef mem_block_t mem_heap_t;
 
-/** Types of allocation for memory heaps: DYNAMIC means allocation from the
-dynamic memory pool of the C compiler, BUFFER means allocation from the
-buffer pool; the latter method is used for very big heaps */
+/**
+ * Types of allocation for memory heaps:
+ *
+ * - DYNAMIC means allocation from the
+ *   dynamic memory pool of the C compiler.
+ *
+ *   IS the most common type
+ *
+ * - BUFFER means allocation from the buffer pool;
+ *
+ * - MEM_HEAP_BTR_SEARCH the latter method is
+ *   used for very big heaps
+ *   this flag can optionally be
+ *   __OR__ to MEM_HEAP_BUFFER, in which
+ *   case heap->free_block is used in
+ *   some cases for memory allocations,
+ *   and if it's NULL, the memory
+ *   allocation functions can return
+ *   NULL. 
+ *
+ * 为了生成memory heaps，有3种方式来alloc
+ *
+ */
+#define MEM_HEAP_DYNAMIC 	0
+#define MEM_HEAP_BUFFER 	1
+#define MEM_HEAP_BTR_SEARCH 2
 
-#define MEM_HEAP_DYNAMIC 0 /* the most common type */
-#define MEM_HEAP_BUFFER 1
-#define MEM_HEAP_BTR_SEARCH            \
-  2 /* this flag can optionally be     \
-    ORed to MEM_HEAP_BUFFER, in which  \
-    case heap->free_block is used in   \
-    some cases for memory allocations, \
-    and if it's NULL, the memory       \
-    allocation functions can return    \
-    NULL. */
-
-/** Different type of heaps in terms of which data structure is using them */
+/**
+ * Different type of heaps in terms
+ * of which data structure is using them
+ *
+ * 就数据结构的使用而言，有哪些heap的类型
+ */
 #define MEM_HEAP_FOR_BTR_SEARCH (MEM_HEAP_BTR_SEARCH | MEM_HEAP_BUFFER)
 #define MEM_HEAP_FOR_PAGE_HASH (MEM_HEAP_DYNAMIC)
 #define MEM_HEAP_FOR_RECV_SYS (MEM_HEAP_BUFFER)
 #define MEM_HEAP_FOR_LOCK_HEAP (MEM_HEAP_BUFFER)
 
-/** The following start size is used for the first block in the memory heap if
-the size is not specified, i.e., 0 is given as the parameter in the call of
-create. The standard size is the maximum (payload) size of the blocks used for
-allocations of small buffers. */
+/**
+ * 1. The following start size is used for the first block
+ * in the memory heap if the size is not specified, i.e.:
+ *  - 0 is given as the parameter in the call of create.
+ *
+ * 2. The standard size is the maximum (payload) size of
+ *    the blocks used for allocations of small buffers.
+ *
+ * - MEM_BLOCK_START_SIZE是用来给mem_heap中的第一个block用的，比如当
+ *   在create的时候，size参数没有指定(给定的参数size = 0).
+ *   也就是说，在create的时候，heap中的第一个block的size=0时，就会采用START_SIZE
+ *
+ * - MEM_BLOCK_STANDARD_SIZE 是申请small buffers的是候的最小的单位!
+ */
 
 #define MEM_BLOCK_START_SIZE 64
 #define MEM_BLOCK_STANDARD_SIZE \
   (UNIV_PAGE_SIZE >= 16384 ? 8000 : MEM_MAX_ALLOC_IN_BUF)
 
-/** If a memory heap is allowed to grow into the buffer pool, the following
-is the maximum size for a single allocated buffer
-(from UNIV_PAGE_SIZE we subtract MEM_BLOCK_HEADER_SIZE and 2*MEM_NO_MANS_LAND
-since it's something we always need to put. Since in MEM_SPACE_NEEDED we round
-n to the next multiple of UNIV_MEM_ALINGMENT, we need to cut from the rest the
-part that cannot be divided by UNIV_MEM_ALINGMENT): */
+/**
+ * If a memory heap is allowed to grow into the buffer pool,
+ * the following is the maximum size for a single allocated buffer
+ * (from UNIV_PAGE_SIZE we subtract MEM_BLOCK_HEADER_SIZE and
+ * 2*MEM_NO_MANS_LAND ince it's something we always need to put.
+ * Since in MEM_SPACE_NEEDED we round
+ * n to the next multiple of UNIV_MEM_ALINGMENT, we need to
+ * cut from the rest the
+ * part that cannot be divided by UNIV_MEM_ALINGMENT):
+ *
+ * 这个就是一个mem_block最大的可以用来作分配的大小
+ */
 #define MEM_MAX_ALLOC_IN_BUF                                         \
   ((UNIV_PAGE_SIZE - MEM_BLOCK_HEADER_SIZE - 2 * MEM_NO_MANS_LAND) & \
    ~(UNIV_MEM_ALIGNMENT - 1))
@@ -127,8 +168,14 @@ contains two areas of no mans lands before and after the buffer requested. */
   mem_heap_create_func((size), __FILE__, __LINE__, (type))
 
 #else /* UNIV_DEBUG */
-/** Macro for memory heap creation.
-@param[in]	size		Desired start block size. */
+
+/**
+ * 宏功能：
+ * - 用来创建memory heap.
+ *
+ * 输入参数：
+ * - size: 表示heap中start block的大小
+ */
 #define mem_heap_create(size) mem_heap_create_func((size), MEM_HEAP_DYNAMIC)
 
 /** Macro for memory heap creation.
@@ -378,10 +425,11 @@ in subsequent blocks this is undefined */
   allocated buffer frame, which can be appended as a
   free block to the heap, if we need more space;
   otherwise, this is NULL */
+
+  // - 如果block是从buffer pool里面申请的
+  //   那么这个指针就指向buf_block_t所在位置
+  // - 否则，这里就是空的
   void *buf_block;
-  /* if this block has been allocated from the buffer
-  pool, this contains the buf_block_t handle;
-  otherwise, this is NULL */
 };
 
 #define MEM_BLOCK_MAGIC_N 0x445566778899AABB

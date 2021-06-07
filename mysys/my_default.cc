@@ -82,6 +82,7 @@
 #include <winbase.h>
 #endif
 
+#include <cstdlib>
 #include <algorithm>
 #include <map>
 #include <string>
