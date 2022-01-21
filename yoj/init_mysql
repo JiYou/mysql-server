@@ -1,0 +1,9 @@
+#!/bin/bash
+
+TOPDIR=$(cd $(dirname "$0") && pwd)
+./mysqld                                  \
+--defaults-file=${TOPDIR}/my8021.cnf      \
+--console                                 \
+--basedir=${TOPDIR}                       \
+--initialize-insecure                     \
+--datadir=${TOPDIR}/data

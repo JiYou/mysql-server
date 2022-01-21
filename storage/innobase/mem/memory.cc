@@ -409,6 +409,10 @@ mem_block_t *mem_heap_create_block_func(
 
 #else  /* !UNIV_LIBRARY && !UNIV_HOTBACKUP */
   len = MEM_BLOCK_HEADER_SIZE + MEM_SPACE_NEEDED(n);
+  // #define ut_malloc_nokey(n_bytes)               \
+  // static_cast<void *>(                         \
+  //     ut_allocator<byte>(PSI_NOT_INSTRUMENTED) \
+  //        .allocate(n_bytes, NULL, UT_NEW_THIS_FILE_PSI_KEY, false, false))
   block = static_cast<mem_block_t *>(ut_malloc_nokey(len));
   ut_a(block);
   block->free_block = nullptr;

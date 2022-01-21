@@ -21,6 +21,14 @@ fi
 
 # 开始编译Mysql
 
+if [[ ! -e download/boost_1_73_0.tar.gz ]]; then
+  cd download
+
+  wget https://boostorg.jfrog.io/artifactory/main/release/1.73.0/source/boost_1_73_0.tar.gz
+
+  cd ..
+fi
+
 mkdir -p build
 cd build
 
@@ -31,7 +39,7 @@ cmake .. \
 -DDEFAULT_COLLATION=utf8_general_ci \
 -DENABLED_LOCAL_INFILE=ON \
 -DWITH_INNODB_MEMCACHED=ON \
--DWITH_SSL=/Users/yoj/code/mysql-server/extra/openssl-1.1.1k/out \
+-DWITH_SSL=/Users/youji/Documents/code/mysql-server/extra/openssl-1.1.1k/out \
 -DWITH_INNOBASE_STORAGE_ENGINE=1 \
 -DDOWNLOAD_BOOST=1 \
 -DWITH_BOOST=../download

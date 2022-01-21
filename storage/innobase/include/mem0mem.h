@@ -110,7 +110,8 @@ typedef mem_block_t mem_heap_t;
  *   在create的时候，size参数没有指定(给定的参数size = 0).
  *   也就是说，在create的时候，heap中的第一个block的size=0时，就会采用START_SIZE
  *
- * - MEM_BLOCK_STANDARD_SIZE 是申请small buffers的是候的最小的单位!
+ * - MEM_BLOCK_STANDARD_SIZE 是申请small buffers的时候的最小的单位!
+ * - MEM_MAX_ALLOC_IN_BUF的定义在下面!
  */
 
 #define MEM_BLOCK_START_SIZE 64
@@ -128,6 +129,8 @@ typedef mem_block_t mem_heap_t;
  * part that cannot be divided by UNIV_MEM_ALINGMENT):
  *
  * 这个就是一个mem_block最大的可以用来作分配的大小
+ * - MEM_NO_MANS_LAND = 0
+ *
  */
 #define MEM_MAX_ALLOC_IN_BUF                                         \
   ((UNIV_PAGE_SIZE - MEM_BLOCK_HEADER_SIZE - 2 * MEM_NO_MANS_LAND) & \
