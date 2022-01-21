@@ -1,6 +1,5 @@
 [mysqld]
 
-verlaine_enabled=2
 port=3306
 bind_address=0.0.0.0
 skip-external-locking
@@ -84,87 +83,16 @@ innodb_buffer_pool_dump_at_shutdown=OFF
 table_open_cache=20000
 innodb_autoinc_lock_mode=2
 
-#innodb_sync_log_slots=1
-
-#innodb_write_io_threads=4
-innodb_aio_write_slots=32
-
 max_prepared_stmt_count=65535
 
 max_connections=50000
 
-#innodb_flush_method=O_DIRECT
-innodb_use_native_aio=ON
-
-innodb_verlaine_enabled=ON
-
-mountdir=/mnt/yoj-m7
-datadir=/mnt/yoj-m7/data5
-innodb_undo_directory=/mnt/yoj-m7/data5/undo
-log_bin=/mnt/yoj-m7/bins/binlog
-tmpdir=/mnt/yoj-m7/bins/tmp
+datadir=/Users/youji/Documents/code/mysql-server/yoj/data
+innodb_undo_directory=/Users/youji/Documents/code/mysql-server/yoj/data/undo
+log_bin=/Users/youji/Documents/code/mysql-server/yoj/bins/binlog
+tmpdir=/Users/youji/Documents/code/mysql-server/yoj/bins/tmp
 innodb_flush_log_at_trx_commit = 2
 sync_binlog = 0
 
 core-file
-
-#accept_thread_priority=2
-#innodb_chunk_write_enabled=ON
-#innodb_chunk_read_enabled=ON
-#innodb_fast0ext_enabled=ON
-binlog_thd_synclock_enabled=ON
-innodb_delay_datasync=ON
-innodb_delay_logwrite=ON
-innodb_aggressive_pc=ON
-#innodb_log_wrlock_retrymax=32
-#innodb_dpage_backpressure=ON
-innodb_io_capacity_calibrate=2
-innodb_io_capacity_calibceil=102400
-innodb_force_pacing=ON
-innodb_avoid_logwrite=ON
-#innodb_inflight_syncio=64
-#innodb_sync_log_slots=1
-#innodb_aio_write_slots=40
-innodb_page_cleaner_priority=4
-binlog_index_doublewrite=ON
-#innodb_filesize_update_interval=30
-innodb_write_io_threads_enforced=2
-innodb_read_io_threads_enforced=1
-innodb_page_cleaners_enforced=3
-innodb_use_enforced=ON
-list_dir_files_name_only=ON
-innodb_list_dir_files_name_only=ON
-#frm_type_from_tdc=ON
-#dir_cache_enabled=ON
-#innodb_diskfull_wa_enabled=ON
-#innodb_ignore_fsctl_set_sparse=ON
-#innodb_ignore_fsctl_set_zero_data=ON
-#file_close_and_delete_enabled=ON
-#file_close_async_enabled=ON
-innodb_dynamic_page_cleaners=ON
-
-#innodb_log_write_max_size=16777216
-#innodb_log_recent_written_size=33554432
-
-innodb_verlaine_persist_lease=OFF
-
-verlaine_USE_HTTP_IO_FOR_READ=1
-verlaine_USE_HTTP_IO_FOR_WRITE=1
-verlaine_HTTP_THREAD_PER_POOL=2
-verlaine_HTTP_CONNECTION_PER_CLIENT=270
-
-# innodb_logwr_prio_checkpoint=2
-
 lower_case_table_names=1
-
-vfs_log_level=30
-
-binlog_cache_size=2097152
-# rpl_read_size=2097152
-binlog_io_cache_size=2097152
-
-innodb_read_io_threads_enforced=1
-innodb_write_io_threads_enforced=1
-innodb_aio_write_slots=128
-innodb_aio_read_slots=64
-innodb_aio_log_slots=32

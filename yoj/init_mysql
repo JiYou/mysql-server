@@ -1,7 +1,11 @@
 #!/bin/bash
 
 TOPDIR=$(cd $(dirname "$0") && pwd)
-./mysqld                                  \
+
+mkdir -p ${TOPDIR}/bins/binlog
+mkdir -p ${TOPDIR}/bins/tmp
+
+../build/runtime_output_directory/mysqld  \
 --defaults-file=${TOPDIR}/my8021.cnf      \
 --console                                 \
 --basedir=${TOPDIR}                       \
